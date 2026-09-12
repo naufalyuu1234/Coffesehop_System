@@ -1,0 +1,11 @@
+# AI Skills & Agent config
+.agents/
+skills-lock.json
+
+# Django & Python
+db.sqlite3
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
