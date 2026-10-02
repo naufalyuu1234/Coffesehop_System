@@ -1,7 +1,12 @@
 from django.shortcuts import render
-# from django.http import HttpResponse
-# from .models import Product
+from .models import Category,Product
+from django.db.models import Prefetch
 
 # Create your views here.
 def product_list(request):
-    return render(request, 'hello.html')
+    categories = Category.objects.prefetch_related(
+        Prefetch('products', queryset=Product.objects.filter(is_available=True))
+    ).all()
+    return render(request, 'menu_products/product_list.html', {
+        'categories': categories
+    })

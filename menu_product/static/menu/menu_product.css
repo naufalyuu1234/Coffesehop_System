@@ -1,0 +1,158 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --coffee-dark: #3e2723;
+  --coffee-mid: #6f4e37;
+  --cream: #fffaf3;
+  --accent: #c8874a;
+}
+
+body {
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background-color: var(--coffee-mid);
+  color: #333;
+  padding: 2rem;
+}
+
+.menu-card {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 3rem;
+  background: var(--accent);
+  border-radius: 4px;
+  padding: 2rem;
+}
+
+.menu-hero {
+  background: transparent;
+  grid-column: 1;
+  justify-self: start;
+  margin: 0;
+  grid-row: 1 / -1;
+  align-self: stretch;
+}
+
+.menu-hero h1 {
+  font-family: Georgia, serif;
+  font-size: 2.5rem;
+  color: var(--coffee-dark);
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.menu-hero img {
+  width: 100%;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.hours-box {
+  background: var(--coffee-dark);
+  color: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 4px;
+  margin-top: 2rem;
+}
+
+.hours-box h4 {
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.hours-box p {
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem 2rem;
+  align-content: start;
+}
+
+.menu-category {
+  min-width: 0;
+}
+
+.menu-category h2 {
+  font-family: Georgia, serif;
+  color: var(--coffee-dark);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.menu-category hr {
+  margin-bottom: 1.5rem;
+  border: 0;
+  border-bottom: 1px solid var(--coffee-dark);
+}
+
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.item-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  align-items: baseline;
+  text-transform: uppercase;
+  color: var(--coffee-dark);
+}
+
+.item-name {
+  font-weight: 600;
+  padding-right: 1rem;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+}
+
+.item-price {
+  white-space: nowrap;
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+
+.item-desc {
+  font-size: 0.85rem;
+  line-height: 0.25;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.status-product {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.status-product.status-available {
+  color: #2e7d32 !important; 
+}
+
+.status-product.status-unavailable {
+  color: #c62828 !important; 
+}

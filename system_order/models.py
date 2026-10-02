@@ -28,20 +28,24 @@ class Order(models.Model):
         self.total_amount = total
         self.save(update_fields=['total_amount'])
 
+    @property
+    def formatted_total(self):
+        return f"{int(self.total_amount):,}".replace(",", ".")
+
 #OrderItems Model
 class OrderItem(models.Model):
     order = models.ForeignKey(
-        Order,
+        'system_order.Order',
         on_delete=models.CASCADE,
         related_name='items'
     )
     product = models.ForeignKey(
-        Product,
+        'menu_product.Product',
         on_delete=models.PROTECT,
         related_name='order_items'
     )
     quantity = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
+    price = models.PositiveIntegerField(editable=False)
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
@@ -51,9 +55,11 @@ class OrderItem(models.Model):
             self.price = self.product.price
         super().save(*args, **kwargs)
         # Update total harga setelah di save
-        self.order.update_total_amount()
+        if hasattr(self.order, 'update_total_amount'):
+            self.order.update_total_amount()
 
     def delete(self, *args, **kwargs):
         order = self.order
         super().delete(*args, **kwargs)
-        order.update_total_amount()
+        if hasattr(order, 'update_total_amount'):
+            order.update_total_amount()

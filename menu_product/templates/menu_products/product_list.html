@@ -1,0 +1,54 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menu Product List</title>
+    <link rel="stylesheet" href="{% static 'menu/menu_product.css' %}" />
+  </head>
+  <body>
+    <div class="menu-card">
+      <aside class="menu-hero">
+        <h1>MyCoffe Menu List</h1>
+        <img
+          src="{% static 'menu/image/coffee-poster.jpg' %}"
+          alt="Menu Poster"
+        />
+        <div class="hours-box">
+          <h4>Jam Buka</h4>
+          <p>Senin - Kamis: 08.00 - 21.00</p>
+          <p>Jumat - Minggu: 08.00 - 23.00</p>
+        </div>
+      </aside>
+
+      <div class="category-grid">
+        {% comment %}Loop Kategori {% endcomment %} {% for category in categories %}
+        <section class="menu-category">
+          <h2>{{ category.name }}</h2>
+          <hr />
+          <div class="list-product">
+            {% comment %} Loop Product {% endcomment %} {% for product in category.products.all %}
+            <article class="menu-item">
+              <div class="item-head">
+                <span class="item-name">{{ product.name }}</span>
+                <span class="item-price">{{ product.formatted_price }}</span>
+                <span class="status-product {{ product.status_css_class}}">{{ product.status_label }}</span>
+              </div>
+              {% if product.description %}
+              <p class="item-desc">{{ product.description}}</p>
+              {%endif%}
+            </article>
+            {% empty %}
+            <p>Belum ada produk untuk kategori ini.</p>
+            {% endfor %}
+          </div>
+        </section>
+        {% empty %}
+        <p>Belum ada kategori menu</p>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>

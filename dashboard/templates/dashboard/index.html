@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'dashboard/index.css' %}">
+    <title>Document</title>
+  </head>
+  <body>
+    {% comment %} Header Section {% endcomment %}
+    <header>
+      <h1>Dashboard Kasir</h1>
+      <p>{{ request.user.username }} — {% now "l, d F Y" %}</p>
+    </header>
+
+    <section class="summary">
+      <div class="stat">
+        <span>Order Hari Ini</span>
+        <strong>{{ total_orders_today }}</strong>
+      </div>
+      <div class="stat">
+        <span>Pending</span>
+        <strong>{{ pending_orders_today }}</strong>
+      </div>
+      <div class="stat">
+        <span>Pendapatan Hari Ini</span>
+        <strong>Rp{{ revenue_today }}</strong>
+      </div>
+    </section>
+    {% comment %} Header Section End {% endcomment %}
+
+    {% comment %} Grid Layout Section {% endcomment %}
+    <main class="content-grid">
+      <!-- Card 1: Daftar Order -->
+      <section class="card">
+        <div class="card-icon">
+          <img src="{% static 'dashboard/image/order-icon.png' %}" alt="Order Icon">
+        </div>
+        <h3>Daftar Order</h3>
+        <p>Pantau laporan penjualan, status pesanan pembeli, dan rincian transaksi harian.</p>
+        <a href="{% url 'system_order:list' %}" class="card-btn">Buka Order &rarr;</a>
+      </section>
+    
+      <!-- Card 2: Katalog Produk -->
+      <section class="card">
+        <div class="card-icon">
+          <img src="{% static 'dashboard/image/order-icon.png' %}" alt="Katalog">
+        </div>
+        <h3>Katalog Produk</h3>
+        <p>Kelola menu kopi, minuman, dan ketersediaan stok bahan baku.</p>
+        <a href="{% url "menu_product:menu" %}" class="card-btn">Lihat Produk &rarr;</a>
+      </section>
+    
+      <!-- Card 3: Transaksi Baru -->
+      <section class="card">
+        <div class="card-icon">
+          <img src="{% static 'dashboard/image/order-icon.png' %}" alt="Transaksi">
+        </div>
+        <h3>Transaksi Baru</h3>
+        <p>Buat pesanan baru untuk pelanggan kasir langsung di meja kasir.</p>
+        <a href="#" class="card-btn">Tambah Transaksi &rarr;</a>
+      </section>
+    </main>
+    {% comment %} Grid Layout Section End {% endcomment %}
+  </body>
+</html>

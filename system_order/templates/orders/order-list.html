@@ -1,0 +1,30 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'orders/css/order-list.css' %}" />
+    <title>Order List</title>
+  </head>
+  <body>
+    <h1>DAFTAR ORDER</h1>
+    <main class="container">
+      {% for order in orders %}
+      <div class="card">
+        <span class="status status--{{ order.status|lower }}"
+          >{{ order.get_status_display }}</span
+        >
+        <h3>{{ order.customer_name }}</h3>
+        <p>Rp{{ order.formatted_total }}</p>
+        <small>{{ order.created_at }}</small>
+        <a href="{% url 'system_order:detail' order.id %}" class="btn-continue"
+          >Lihat Detail</a
+        >
+      </div>
+      {% empty %}
+      <p>Belum ada order tersedia bos kuuu.</p>
+      {% endfor %}
+    </main>
+  </body>
+</html>

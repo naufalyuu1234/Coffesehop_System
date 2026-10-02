@@ -1,0 +1,71 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'orders/css/order-detail.css' %}" />
+    <title>Detail Order #{{ order.id }}</title>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Card Info Order -->
+      <div class="card">
+        <header>
+          <h1>Detail Order #{{ orders.id }}</h1>
+        </header>
+        <div class="meta-info">
+          <p>
+            <strong>Customer:</strong> {{ orders.customer_name|default:"KOSONG"}}
+          </p>
+          <p><strong>Status:</strong> {{ orders.get_status_display }}</p>
+          <p>
+            <strong>Tanggal:</strong> {{ orders.created_at|date:"d M Y, H:i" }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Tabel Rincian Produk -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Produk</th>
+              <th class="text-right">Harga Satuan</th>
+              <th class="text-right">Jumlah</th>
+              <th class="text-right">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in orders.items.all %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td class="text-right">Rp{{ item.price }}</td>
+              <td class="text-right">{{ item.quantity }}</td>
+              <td class="text-right">
+                Rp{% widthratio item.price 1 item.quantity %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" style="text-align: center; color: #888">
+                Tidak ada item dalam pesanan ini.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Total Bayar Box -->
+      <div class="total-box">
+        <span>Total Bayar:</span>
+        <span>Rp{{ orders.formatted_total }}</span>
+      </div>
+
+      <a href="{% url 'system_order:list' %}" class="btn-back"
+        >← Kembali ke Daftar Order</a
+      >
+    </div>
+  </body>
+</html>

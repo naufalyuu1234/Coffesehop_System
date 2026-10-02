@@ -1,0 +1,151 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background-color: #f7f5f2;
+  color: #333;
+  padding: 2rem;
+}
+
+:root {
+  --coffee-dark: #3e2723;
+  --coffee-mid: #6f4e37;
+  --cream: #fffaf3;
+  --accent: #c8874a;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: var(--coffee-dark);
+  color: #fff;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+header p {
+  margin: 0;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.summary {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.stat {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  flex: 1;
+  min-width: 160px;
+}
+
+.stat span {
+  display: block;
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 0.4rem;
+}
+
+.stat strong {
+  font-size: 1.6rem;
+  color: #2c2c2c;
+}
+
+/* Grid Section */
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(111, 78, 55, 0.1);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(62, 39, 35, 0.04);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 24px rgba(62, 39, 35, 0.1);
+}
+
+.card-icon {
+  width: 64px;
+  height: 64px;
+  background-color: rgba(200, 135, 74, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.card-icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.card h3 {
+  font-size: 1.2rem;
+  color: var(--coffee-dark);
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+}
+
+.card p {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.card-btn {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--coffee-mid);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.card-btn:hover {
+  background-color: var(--coffee-dark);
+}

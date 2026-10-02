@@ -1,0 +1,140 @@
+/* Font lokal, bukan CDN eksternal — ganti open-props/normalize dengan reset manual ringan */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --coffee-dark: #3e2723;
+  --coffee-mid: #6f4e37;
+  --coffee-light: #a67c52;
+  --cream: #fffaf3;
+  --accent: #c8874a;
+  --bg: #f7f5f2;
+  --text: #333;
+  --text-soft: #6b6b6b;
+
+  --status-pending-bg: #fef3c7;
+  --status-pending-text: #92400e;
+  --status-paid-bg: #d1fae5;
+  --status-paid-text: #065f46;
+  --status-cancelled-bg: #fee2e2;
+  --status-cancelled-text: #991b1b;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  padding: 2rem;
+}
+
+h1 {
+  color: var(--coffee-dark);
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem 0;
+}
+
+/* Card */
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(111, 78, 55, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(62, 39, 35, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(62, 39, 35, 0.1);
+  border-color: var(--accent);
+}
+
+/* Hierarki visual: judul paling nonjol, meta paling redup */
+.card h3 {
+  font-size: 1.2rem;
+  color: var(--coffee-dark);
+}
+
+.card p {
+  line-height: 1.5;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.card small {
+  line-height: 1.4;
+  color: var(--text-soft);
+  font-size: 0.8rem;
+}
+
+/* Badge status — paling penting buat kasir, dikasih warna kontras */
+.status {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.status--pending {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-text);
+}
+
+.status--paid {
+  background: var(--status-paid-bg);
+  color: var(--status-paid-text);
+}
+
+.status--cancelled {
+  background: var(--status-cancelled-bg);
+  color: var(--status-cancelled-text);
+}
+
+/* Tombol — pakai variabel, bukan hex hardcode */
+.btn-continue {
+  margin-top: auto;
+  display: inline-block;
+  padding: 0.6rem 1.1rem;
+  background: var(--coffee-mid);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 500;
+  transition: background 0.25s ease;
+}
+
+.btn-continue:hover {
+  background: var(--coffee-dark);
+}
+
+/* Responsive — kasir sering pake tablet/layar kecil */
+@media (max-width: 640px) {
+  body {
+    padding: 1rem;
+  }
+  .container {
+    padding: 1rem 0;
+    gap: 1rem;
+  }
+  .card {
+    padding: 1.25rem;
+  }
+}

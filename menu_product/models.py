@@ -29,6 +29,16 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    # format mata uang rupiah
     @property
     def formatted_price(self):
         return f"Rp{self.price:,}".replace(",", ".")
+
+    # status ketersediaan
+    @property
+    def status_label(self):
+        return "Tersedia" if self.is_available else "Habis"
+
+    @property
+    def status_css_class(self):
+        return "status-available" if self.is_available else "status-unavailable"
