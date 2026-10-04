@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8"><title>Pembayaran</title></head>
+<body>
+<h1>Pembayaran Order #{{ order.id }}</h1>
+<p>Total yang harus dibayar: Rp{{ order.formatted_total }}</p>
+{% if messages %}{% for message in messages %}<p>{{ message }}</p>{% endfor %}{% endif %}
+<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Bayar</button></form>
+</body>
+</html>

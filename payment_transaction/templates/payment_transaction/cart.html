@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8"><title>Keranjang</title></head>
+<body>
+<h1>Keranjang Belanja</h1>
+{% for item in items %}
+<p>{{ item.product.name }} — Rp{{ item.product.price }} x {{ item.quantity }} = Rp{{ item.subtotal }}
+  <form method="post" action="{% url 'payment_transaction:cart_decrease' item.product.id %}" style="display:inline">{% csrf_token %}<button>-</button></form>
+  <form method="post" action="{% url 'payment_transaction:cart_increase' item.product.id %}" style="display:inline">{% csrf_token %}<button>+</button></form>
+  <form method="post" action="{% url 'payment_transaction:cart_remove' item.product.id %}" style="display:inline">{% csrf_token %}<button>Hapus</button></form>
+</p>
+{% empty %}<p>Keranjang masih kosong.</p>{% endfor %}
+<p><strong>Total: Rp{{ total }}</strong></p>
+<a href="{% url 'payment_transaction:checkout' %}">Checkout</a>
+</body>
+</html>

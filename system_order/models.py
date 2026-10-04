@@ -28,6 +28,18 @@ class Order(models.Model):
         self.total_amount = total
         self.save(update_fields=['total_amount'])
 
+    def mark_as_paid(self):
+        if self.status != "PENDING":
+            raise ValueError("Order ini tidak dapat dibayar.")
+        self.status = "PAID"
+        self.save(update_fields=["status", "updated_at"])
+
+    def mark_as_completed(self):
+        if self.status != "PAID":
+            raise ValueError("Hanya order PAID yang dapat diselesaikan.")
+        self.status = "COMPLETED"
+        self.save(update_fields=["status", "updated_at"])
+
     @property
     def formatted_total(self):
         return f"{int(self.total_amount):,}".replace(",", ".")

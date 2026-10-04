@@ -8,4 +8,4 @@ def order_list(request):
 
 def order_detail(request, pk):
     order = get_object_or_404(Order, pk=pk)
-    return render(request, 'orders/order-detail.html', {'orders': order})
+    return render(request, 'orders/order-detail.html', {'order': order})

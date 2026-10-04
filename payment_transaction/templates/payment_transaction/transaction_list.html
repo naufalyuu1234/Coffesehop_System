@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8"><title>Daftar Transaksi</title></head>
+<body>
+<h1>Daftar Transaksi</h1>
+<form method="get"><input name="q" placeholder="Cari transaksi atau pelanggan"><button>Cari</button></form>
+<table><thead><tr><th>Kode</th><th>Order</th><th>Pelanggan</th><th>Metode</th><th>Nominal</th><th>Status</th><th>Aksi</th></tr></thead>
+<tbody>{% for item in transactions %}<tr><td>{{ item.transaction_code }}</td><td>#{{ item.order.id }}</td><td>{{ item.order.customer_name }}</td><td>{{ item.get_payment_method_display }}</td><td>Rp{{ item.amount_due }}</td><td>{{ item.get_status_display }}</td><td><a href="{% url 'payment_transaction:detail' item.id %}">Detail</a></td></tr>{% empty %}<tr><td colspan="7">Belum ada transaksi.</td></tr>{% endfor %}</tbody></table>
+</body>
+</html>

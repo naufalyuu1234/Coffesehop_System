@@ -24,6 +24,7 @@
       </aside>
 
       <div class="category-grid">
+        <p><a href="{% url 'payment_transaction:cart' %}">Keranjang</a></p>
         {% comment %} Loop Kategori {% endcomment %}
         {% for category in categories %}
         <section class="menu-category">
@@ -37,6 +38,11 @@
                 <span class="item-name">{{ product.name }}</span>
                 <span class="item-price">{{ product.formatted_price }}</span>
                 <span class="status-product {{ product.status_css_class }}">{{ product.status_label }}</span>
+                {% if product.is_available %}
+                <form method="post" action="{% url 'payment_transaction:cart_add' product.id %}">
+                  {% csrf_token %}<button type="submit">Tambah ke keranjang</button>
+                </form>
+                {% endif %}
               </div>
               {% if product.description %}
               <p class="item-desc">{{ product.description }}</p>

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8"><title>Checkout</title></head>
+<body>
+<h1>Checkout</h1>
+{% for item in items %}<p>{{ item.product.name }} x {{ item.quantity }} — Rp{{ item.subtotal }}</p>{% endfor %}
+<p><strong>Total: Rp{{ total }}</strong></p>
+<form method="post">{% csrf_token %}
+  <label>Nama pelanggan <input name="customer_name" required></label>
+  <button type="submit">Buat Order</button>
+</form>
+</body>
+</html>

@@ -27,6 +27,10 @@
         <span>Pendapatan Hari Ini</span>
         <strong>Rp{{ revenue_today }}</strong>
       </div>
+      <div class="stat">
+        <span>Transaksi Sukses</span>
+        <strong>{{ successful_transactions_today }}</strong>
+      </div>
     </section>
     {% comment %} Header Section End {% endcomment %}
 
@@ -59,7 +63,7 @@
         </div>
         <h3>Transaksi Baru</h3>
         <p>Buat pesanan baru untuk pelanggan kasir langsung di meja kasir.</p>
-        <a href="#" class="card-btn">Tambah Transaksi &rarr;</a>
+        <a href="{% url 'payment_transaction:cart' %}" class="card-btn">Tambah Transaksi &rarr;</a>
       </section>
     </main>
     {% comment %} Grid Layout Section End {% endcomment %}

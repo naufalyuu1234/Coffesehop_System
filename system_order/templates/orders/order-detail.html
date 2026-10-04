@@ -12,15 +12,15 @@
       <!-- Card Info Order -->
       <div class="card">
         <header>
-          <h1>Detail Order #{{ orders.id }}</h1>
+          <h1>Detail Order #{{ order.id }}</h1>
         </header>
         <div class="meta-info">
           <p>
-            <strong>Customer:</strong> {{ orders.customer_name|default:"KOSONG"}}
+            <strong>Customer:</strong> {{ order.customer_name|default:"KOSONG"}}
           </p>
-          <p><strong>Status:</strong> {{ orders.get_status_display }}</p>
+          <p><strong>Status:</strong> {{ order.get_status_display }}</p>
           <p>
-            <strong>Tanggal:</strong> {{ orders.created_at|date:"d M Y, H:i" }}
+            <strong>Tanggal:</strong> {{ order.created_at|date:"d M Y, H:i" }}
           </p>
         </div>
       </div>
@@ -37,7 +37,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in orders.items.all %}
+            {% for item in order.items.all %}
             <tr>
               <td>{{ item.product.name }}</td>
               <td class="text-right">Rp{{ item.price }}</td>
@@ -60,12 +60,15 @@
       <!-- Total Bayar Box -->
       <div class="total-box">
         <span>Total Bayar:</span>
-        <span>Rp{{ orders.formatted_total }}</span>
+        <span>Rp{{ order.formatted_total }}</span>
       </div>
 
       <a href="{% url 'system_order:list' %}" class="btn-back"
         >← Kembali ke Daftar Order</a
       >
+      {% if order.status == "PENDING" %}
+      <a href="{% url 'system_order:payment' order.id %}" class="btn-back">Bayar Order</a>
+      {% endif %}
     </div>
   </body>
 </html>

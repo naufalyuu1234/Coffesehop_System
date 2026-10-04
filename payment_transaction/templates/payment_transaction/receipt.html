@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8"><title>Struk {{ transaction.transaction_code }}</title><style>@media print{button{display:none}}</style></head>
+<body>
+<h1>Coffee Shop</h1><h2>Struk Transaksi</h2>
+<p>{{ transaction.transaction_code }}<br>Order #{{ transaction.order.id }}<br>{{ transaction.created_at|date:"d M Y, H:i" }}<br>{{ transaction.order.customer_name }}</p>
+{% for item in transaction.order.items.all %}<p>{{ item.product.name }} x {{ item.quantity }} — Rp{{ item.price }}</p>{% endfor %}
+<p>Total: Rp{{ transaction.amount_due }}<br>Bayar: Rp{{ transaction.amount_paid }}<br>Kembalian: Rp{{ transaction.change_amount }}<br>{{ transaction.get_payment_method_display }}<br>{{ transaction.get_status_display }}</p>
+<button onclick="window.print()">Cetak struk</button>
+</body>
+</html>

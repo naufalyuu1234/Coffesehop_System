@@ -9,7 +9,6 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer_name', 'status', 'total_amount', 'created_at')
-    list_editable = ('status',)  
     list_filter = ('status', 'created_at')
     search_fields = ('customer_name', 'id')
     readonly_fields = ('total_amount', 'created_at', 'updated_at')

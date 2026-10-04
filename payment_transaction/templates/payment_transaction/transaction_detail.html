@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8"><title>Detail Transaksi</title></head>
+<body>
+<h1>Transaksi {{ transaction.transaction_code }}</h1>
+<p>Order #{{ transaction.order.id }} — {{ transaction.order.customer_name }}</p>
+{% for item in transaction.order.items.all %}<p>{{ item.product.name }} x {{ item.quantity }} — Rp{{ item.price }}</p>{% endfor %}
+<p>Total: Rp{{ transaction.amount_due }}</p><p>Dibayar: Rp{{ transaction.amount_paid }}</p><p>Kembalian: Rp{{ transaction.change_amount }}</p>
+<p>Metode: {{ transaction.get_payment_method_display }} | Status: {{ transaction.get_status_display }}</p>
+<a href="{% url 'payment_transaction:receipt' transaction.id %}">Cetak struk</a>
+</body>
+</html>
