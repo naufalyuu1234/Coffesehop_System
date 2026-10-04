@@ -1,13 +1,50 @@
-<!doctype html>
-<html lang="id">
-<head><meta charset="utf-8"><title>Checkout</title></head>
-<body>
-<h1>Checkout</h1>
-{% for item in items %}<p>{{ item.product.name }} x {{ item.quantity }} — Rp{{ item.subtotal }}</p>{% endfor %}
-<p><strong>Total: Rp{{ total }}</strong></p>
-<form method="post">{% csrf_token %}
-  <label>Nama pelanggan <input name="customer_name" required></label>
-  <button type="submit">Buat Order</button>
-</form>
-</body>
-</html>
+{% extends "payment_transaction/base.html" %}
+{% load transaction_format %}
+
+{% block title %}Checkout Kasir{% endblock %}
+
+{% block content %}
+<div class="tx-grid tx-grid--2">
+  <section class="tx-card">
+    <h2>Ringkasan Order</h2>
+    {% for item in items %}
+      <div class="tx-row">
+        <span>{{ item.product.name }} × {{ item.quantity }}</span>
+        <strong>{{ item.subtotal|rupiah }}</strong>
+      </div>
+    {% empty %}
+      <div class="tx-empty">Keranjang kosong. Silakan kembali ke menu.</div>
+    {% endfor %}
+    <p class="tx-total">Total Bayar: {{ total|rupiah }}</p>
+  </section>
+
+  <section class="tx-card">
+    <h2>Data Pelanggan</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="tx-form-row">
+        <label for="id_customer_name">Nama Pelanggan</label>
+        <input id="id_customer_name" name="customer_name" required placeholder="Contoh: Pelanggan Umum">
+      </div>
+      <div class="tx-actions">
+        <a class="tx-btn tx-btn--outline" href="{% url 'payment_transaction:cart' %}">Kembali ke Keranjang</a>
+        <button class="tx-btn" type="submit" id="checkout-submit">Buat Order & Lanjut Bayar</button>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (() => {
+    const form = document.querySelector("form[method='post']");
+    const button = document.getElementById("checkout-submit");
+    if (!form || !button) return;
+    form.addEventListener("submit", () => {
+      button.disabled = true;
+      button.textContent = "Memproses...";
+    });
+  })();
+</script>
+{% endblock %}

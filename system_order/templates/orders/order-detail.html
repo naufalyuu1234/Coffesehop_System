@@ -67,7 +67,7 @@
         >← Kembali ke Daftar Order</a
       >
       {% if order.status == "PENDING" %}
-      <a href="{% url 'system_order:payment' order.id %}" class="btn-back">Bayar Order</a>
+      <a href="{% url 'payment_transaction:payment' order.id %}" class="btn-back">Bayar Order</a>
       {% endif %}
     </div>
   </body>

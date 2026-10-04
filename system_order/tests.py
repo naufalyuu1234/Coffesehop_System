@@ -86,3 +86,20 @@ class OrderModelTest(TestCase):
         self.order.refresh_from_db()
         # Total harus kembali menjadi 18.000
         self.assertEqual(self.order.total_amount, Decimal("18000.00"))
+
+    def test_mark_as_paid_only_from_pending(self):
+        self.order.mark_as_paid()
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, "PAID")
+
+        with self.assertRaises(ValueError):
+            self.order.mark_as_paid()
+
+    def test_mark_as_completed_only_from_paid(self):
+        with self.assertRaises(ValueError):
+            self.order.mark_as_completed()
+
+        self.order.mark_as_paid()
+        self.order.mark_as_completed()
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, "COMPLETED")

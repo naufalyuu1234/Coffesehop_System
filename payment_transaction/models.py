@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import IntegrityError, models, transaction as db_transaction
 from django.utils import timezone
 
 
@@ -48,13 +48,29 @@ class Transaction(models.Model):
     def __str__(self):
         return self.transaction_code
 
+    def _generate_transaction_code(self):
+        stamp = timezone.localdate().strftime("%Y%m%d")
+        prefix = f"TRX-{stamp}-"
+        last = (
+            type(self)
+            .objects.filter(transaction_code__startswith=prefix)
+            .order_by("-transaction_code")
+            .values_list("transaction_code", flat=True)
+            .first()
+        )
+        sequence = int(last.rsplit("-", 1)[-1]) + 1 if last else 1
+        return f"{prefix}{sequence:04d}"
+
     def save(self, *args, **kwargs):
-        if not self.transaction_code:
-            stamp = timezone.localdate().strftime("%Y%m%d")
-            prefix = f"TRX-{stamp}-"
-            last = type(self).objects.filter(transaction_code__startswith=prefix).order_by("-transaction_code").first()
-            sequence = int(last.transaction_code.rsplit("-", 1)[-1]) + 1 if last else 1
-            self.transaction_code = f"{prefix}{sequence:04d}"
+        if self._state.adding and not self.transaction_code:
+            for _ in range(5):
+                self.transaction_code = self._generate_transaction_code()
+                try:
+                    with db_transaction.atomic():
+                        return super().save(*args, **kwargs)
+                except IntegrityError:
+                    self.transaction_code = ""
+            raise IntegrityError("Gagal membuat kode transaksi unik setelah beberapa percobaan.")
         super().save(*args, **kwargs)
 
     def clean(self):
@@ -71,10 +87,15 @@ class Transaction(models.Model):
             return
         if self.amount_due < 0 or self.amount_paid < 0:
             raise ValidationError("Nominal pembayaran tidak boleh negatif.")
-        if self.amount_paid < self.amount_due:
-            raise ValidationError("Pembayaran tidak mencukupi.")
-        self.change_amount = (
-            self.amount_paid - self.amount_due if self.payment_method == "CASH" else Decimal("0")
-        )
+        if self.payment_method == "CASH":
+            if self.amount_paid < self.amount_due:
+                raise ValidationError("Pembayaran tidak mencukupi.")
+            self.change_amount = self.amount_paid - self.amount_due
+        else:
+            if self.amount_paid != self.amount_due:
+                raise ValidationError("Pembayaran non-tunai harus sama dengan total order.")
+            if not self.payment_reference:
+                raise ValidationError({"payment_reference": "Referensi pembayaran wajib diisi."})
+            self.change_amount = Decimal("0")
         if self.status == "SUCCESS" and not self.paid_at:
             self.paid_at = timezone.now()

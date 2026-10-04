@@ -10,8 +10,15 @@ class PaymentForm(forms.ModelForm):
         model = Transaction
         fields = ["payment_method", "amount_paid", "payment_reference", "notes"]
         widgets = {
-            "amount_paid": forms.NumberInput(attrs={"step": "0.01", "min": "0"}),
-            "notes": forms.Textarea(attrs={"rows": 3}),
+            "amount_paid": forms.NumberInput(attrs={"step": "0.01", "min": "0", "placeholder": "Masukkan nominal bayar"}),
+            "payment_reference": forms.TextInput(attrs={"placeholder": "Contoh: REF-12345"}),
+            "notes": forms.Textarea(attrs={"rows": 3, "placeholder": "Catatan tambahan (opsional)"}),
+        }
+        labels = {
+            "payment_method": "Metode Pembayaran",
+            "amount_paid": "Jumlah Dibayar",
+            "payment_reference": "Referensi Pembayaran",
+            "notes": "Catatan",
         }
 
     def __init__(self, *args, order=None, **kwargs):
@@ -26,7 +33,7 @@ class PaymentForm(forms.ModelForm):
             raise forms.ValidationError("Order tidak ditemukan.")
         if amount_paid is None:
             return cleaned
-        if amount_paid < self.order.total_amount:
+        if method == "CASH" and amount_paid < self.order.total_amount:
             self.add_error("amount_paid", "Pembayaran tidak mencukupi.")
         if method != "CASH" and amount_paid != self.order.total_amount:
             self.add_error("amount_paid", "Pembayaran non-tunai harus sama dengan total order.")
