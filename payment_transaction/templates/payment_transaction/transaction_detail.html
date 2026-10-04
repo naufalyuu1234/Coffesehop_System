@@ -1,12 +1,53 @@
-<!doctype html>
-<html lang="id">
-<head><meta charset="utf-8"><title>Detail Transaksi</title></head>
-<body>
-<h1>Transaksi {{ transaction.transaction_code }}</h1>
-<p>Order #{{ transaction.order.id }} — {{ transaction.order.customer_name }}</p>
-{% for item in transaction.order.items.all %}<p>{{ item.product.name }} x {{ item.quantity }} — Rp{{ item.price }}</p>{% endfor %}
-<p>Total: Rp{{ transaction.amount_due }}</p><p>Dibayar: Rp{{ transaction.amount_paid }}</p><p>Kembalian: Rp{{ transaction.change_amount }}</p>
-<p>Metode: {{ transaction.get_payment_method_display }} | Status: {{ transaction.get_status_display }}</p>
-<a href="{% url 'payment_transaction:receipt' transaction.id %}">Cetak struk</a>
-</body>
-</html>
+{% extends "payment_transaction/base.html" %}
+{% load transaction_format %}
+{% block title %}Detail {{ transaction.transaction_code }}{% endblock %}
+
+{% block content %}
+<div class="tx-grid tx-grid--2">
+  <section class="tx-card">
+    <h2>{{ transaction.transaction_code }}</h2>
+    <p><strong>Status Transaksi:</strong> <span class="tx-badge tx-badge--{{ transaction.status }}">{{ transaction.get_status_display }}</span></p>
+    <p><strong>Status Order:</strong> {{ transaction.order.status }}</p>
+    <p><strong>Pelanggan:</strong> {{ transaction.order.customer_name }}</p>
+    <p><strong>Kasir:</strong> {{ transaction.cashier|default:"-" }}</p>
+    <p><strong>Waktu Bayar:</strong> {{ transaction.paid_at|date:"d M Y H:i"|default:"-" }}</p>
+    <p><strong>Dibuat:</strong> {{ transaction.created_at|date:"d M Y H:i" }}</p>
+    <p><strong>Diupdate:</strong> {{ transaction.updated_at|date:"d M Y H:i" }}</p>
+  </section>
+
+  <section class="tx-card">
+    <h3>Ringkasan Pembayaran</h3>
+    <div class="tx-row"><span>Metode</span><strong>{{ transaction.get_payment_method_display }}</strong></div>
+    <div class="tx-row"><span>Referensi</span><strong>{{ transaction.payment_reference|default:"-" }}</strong></div>
+    <div class="tx-row"><span>Total Tagihan</span><strong>{{ transaction.amount_due|rupiah }}</strong></div>
+    <div class="tx-row"><span>Dibayar</span><strong>{{ transaction.amount_paid|rupiah }}</strong></div>
+    <div class="tx-row"><span>Kembalian</span><strong>{{ transaction.change_amount|rupiah }}</strong></div>
+    <div class="tx-row"><span>Catatan</span><strong>{{ transaction.notes|default:"-" }}</strong></div>
+  </section>
+</div>
+
+<section class="tx-card">
+  <h3>Item Pesanan</h3>
+  <div class="tx-table-wrap">
+    <table>
+      <thead>
+        <tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr>
+      </thead>
+      <tbody>
+        {% for item in transaction.order.items.all %}
+          <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price|rupiah }}</td>
+            <td>{% widthratio item.price 1 item.quantity as subtotal %}{{ subtotal|rupiah }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="tx-actions">
+    <a class="tx-btn tx-btn--outline" href="{% url 'payment_transaction:list' %}">Kembali ke Daftar</a>
+    <a class="tx-btn" href="{% url 'payment_transaction:receipt' transaction.id %}">Cetak Struk</a>
+  </div>
+</section>
+{% endblock %}

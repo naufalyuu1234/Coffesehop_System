@@ -1,10 +1,77 @@
-<!doctype html>
-<html lang="id">
-<head><meta charset="utf-8"><title>Daftar Transaksi</title></head>
-<body>
-<h1>Daftar Transaksi</h1>
-<form method="get"><input name="q" placeholder="Cari transaksi atau pelanggan"><button>Cari</button></form>
-<table><thead><tr><th>Kode</th><th>Order</th><th>Pelanggan</th><th>Metode</th><th>Nominal</th><th>Status</th><th>Aksi</th></tr></thead>
-<tbody>{% for item in transactions %}<tr><td>{{ item.transaction_code }}</td><td>#{{ item.order.id }}</td><td>{{ item.order.customer_name }}</td><td>{{ item.get_payment_method_display }}</td><td>Rp{{ item.amount_due }}</td><td>{{ item.get_status_display }}</td><td><a href="{% url 'payment_transaction:detail' item.id %}">Detail</a></td></tr>{% empty %}<tr><td colspan="7">Belum ada transaksi.</td></tr>{% endfor %}</tbody></table>
-</body>
-</html>
+{% extends "payment_transaction/base.html" %}
+{% load transaction_format %}
+{% block title %}Daftar Transaksi{% endblock %}
+
+{% block content %}
+<section class="tx-card">
+  <h2>Daftar Transaksi</h2>
+  <form method="get" class="tx-grid tx-grid--3">
+    <div class="tx-form-row">
+      <label for="id_q">Cari Kode / Pelanggan</label>
+      <input id="id_q" name="q" value="{{ filters.q }}" placeholder="TRX-... / Nama pelanggan">
+    </div>
+    <div class="tx-form-row">
+      <label for="id_status">Status</label>
+      <select id="id_status" name="status">
+        <option value="">Semua status</option>
+        {% for value, label in status_choices %}
+          <option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="tx-form-row">
+      <label for="id_payment_method">Metode</label>
+      <select id="id_payment_method" name="payment_method">
+        <option value="">Semua metode</option>
+        {% for value, label in payment_method_choices %}
+          <option value="{{ value }}" {% if filters.payment_method == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="tx-form-row">
+      <label for="id_date">Tanggal</label>
+      <input id="id_date" type="date" name="date" value="{{ filters.date }}">
+    </div>
+    <div class="tx-actions">
+      <button class="tx-btn" type="submit">Filter</button>
+      <a class="tx-btn tx-btn--outline" href="{% url 'payment_transaction:list' %}">Reset</a>
+      <a class="tx-btn tx-btn--outline" href="{% url 'payment_transaction:cart' %}">Transaksi Baru</a>
+    </div>
+  </form>
+</section>
+
+<section class="tx-card">
+  {% if transactions %}
+    <div class="tx-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Kode</th><th>Order</th><th>Pelanggan</th><th>Metode</th><th>Total</th><th>Status</th><th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in transactions %}
+            <tr>
+              <td>{{ item.transaction_code }}</td>
+              <td>#{{ item.order.id }}</td>
+              <td>{{ item.order.customer_name }}</td>
+              <td>{{ item.get_payment_method_display }}</td>
+              <td>{{ item.amount_due|rupiah }}</td>
+              <td><span class="tx-badge tx-badge--{{ item.status }}">{{ item.get_status_display }}</span></td>
+              <td>
+                <a href="{% url 'payment_transaction:detail' item.id %}">Detail</a> ·
+                <a href="{% url 'payment_transaction:receipt' item.id %}">Struk</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="tx-empty">
+      <p>Tidak ada transaksi sesuai filter.</p>
+      <a class="tx-btn tx-btn--outline" href="{% url 'payment_transaction:cart' %}">Buat Transaksi Baru</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

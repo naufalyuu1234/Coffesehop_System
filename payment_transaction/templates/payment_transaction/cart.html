@@ -1,16 +1,57 @@
-<!doctype html>
-<html lang="id">
-<head><meta charset="utf-8"><title>Keranjang</title></head>
-<body>
-<h1>Keranjang Belanja</h1>
-{% for item in items %}
-<p>{{ item.product.name }} — Rp{{ item.product.price }} x {{ item.quantity }} = Rp{{ item.subtotal }}
-  <form method="post" action="{% url 'payment_transaction:cart_decrease' item.product.id %}" style="display:inline">{% csrf_token %}<button>-</button></form>
-  <form method="post" action="{% url 'payment_transaction:cart_increase' item.product.id %}" style="display:inline">{% csrf_token %}<button>+</button></form>
-  <form method="post" action="{% url 'payment_transaction:cart_remove' item.product.id %}" style="display:inline">{% csrf_token %}<button>Hapus</button></form>
-</p>
-{% empty %}<p>Keranjang masih kosong.</p>{% endfor %}
-<p><strong>Total: Rp{{ total }}</strong></p>
-<a href="{% url 'payment_transaction:checkout' %}">Checkout</a>
-</body>
-</html>
+{% extends "payment_transaction/base.html" %}
+{% load transaction_format %}
+
+{% block title %}Keranjang Kasir{% endblock %}
+
+{% block content %}
+<section class="tx-card">
+  <h2>Keranjang Belanja</h2>
+  {% if items %}
+    <div class="tx-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Produk</th>
+            <th>Harga</th>
+            <th>Qty</th>
+            <th>Subtotal</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.product.price|rupiah }}</td>
+              <td>
+                <div class="tx-qty-controls">
+                  <form method="post" action="{% url 'payment_transaction:cart_decrease' item.product.id %}">{% csrf_token %}<button class="tx-btn tx-btn--outline" type="submit">-</button></form>
+                  <strong>{{ item.quantity }}</strong>
+                  <form method="post" action="{% url 'payment_transaction:cart_increase' item.product.id %}">{% csrf_token %}<button class="tx-btn tx-btn--outline" type="submit">+</button></form>
+                </div>
+              </td>
+              <td>{{ item.subtotal|rupiah }}</td>
+              <td>
+                <form method="post" action="{% url 'payment_transaction:cart_remove' item.product.id %}">
+                  {% csrf_token %}
+                  <button class="tx-btn tx-btn--outline" type="submit">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="tx-actions">
+      <a class="tx-btn tx-btn--outline" href="{% url 'menu_product:menu' %}">Kembali ke Menu</a>
+      <a class="tx-btn" href="{% url 'payment_transaction:checkout' %}">Lanjut Checkout</a>
+    </div>
+    <p class="tx-total">Total Keranjang: {{ total|rupiah }}</p>
+  {% else %}
+    <div class="tx-empty">
+      <p>Keranjang masih kosong.</p>
+      <a class="tx-btn tx-btn--outline" href="{% url 'menu_product:menu' %}">Pilih Menu</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

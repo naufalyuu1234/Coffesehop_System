@@ -1,11 +1,35 @@
-<!doctype html>
-<html lang="id">
-<head><meta charset="utf-8"><title>Struk {{ transaction.transaction_code }}</title><style>@media print{button{display:none}}</style></head>
-<body>
-<h1>Coffee Shop</h1><h2>Struk Transaksi</h2>
-<p>{{ transaction.transaction_code }}<br>Order #{{ transaction.order.id }}<br>{{ transaction.created_at|date:"d M Y, H:i" }}<br>{{ transaction.order.customer_name }}</p>
-{% for item in transaction.order.items.all %}<p>{{ item.product.name }} x {{ item.quantity }} — Rp{{ item.price }}</p>{% endfor %}
-<p>Total: Rp{{ transaction.amount_due }}<br>Bayar: Rp{{ transaction.amount_paid }}<br>Kembalian: Rp{{ transaction.change_amount }}<br>{{ transaction.get_payment_method_display }}<br>{{ transaction.get_status_display }}</p>
-<button onclick="window.print()">Cetak struk</button>
-</body>
-</html>
+{% extends "payment_transaction/base.html" %}
+{% load transaction_format %}
+{% block title %}Struk {{ transaction.transaction_code }}{% endblock %}
+
+{% block content %}
+<section class="tx-receipt">
+  <div class="tx-card">
+    <h2 style="text-align:center; margin-bottom:.25rem;">Coffee Shop</h2>
+    <p style="text-align:center; margin-top:0;">Struk Pembayaran</p>
+    <div class="tx-row"><span>Kode</span><strong>{{ transaction.transaction_code }}</strong></div>
+    <div class="tx-row"><span>Order</span><strong>#{{ transaction.order.id }}</strong></div>
+    <div class="tx-row"><span>Tanggal</span><strong>{{ transaction.created_at|date:"d/m/Y H:i" }}</strong></div>
+    <div class="tx-row"><span>Pelanggan</span><strong>{{ transaction.order.customer_name }}</strong></div>
+    <div class="tx-row"><span>Kasir</span><strong>{{ transaction.cashier|default:"-" }}</strong></div>
+
+    <h4>Detail Item</h4>
+    {% for item in transaction.order.items.all %}
+      <div class="tx-row">
+        <span>{{ item.product.name }} x {{ item.quantity }}</span>
+        <strong>{% widthratio item.price 1 item.quantity as subtotal %}{{ subtotal|rupiah }}</strong>
+      </div>
+    {% endfor %}
+
+    <div class="tx-row"><span>Total</span><strong>{{ transaction.amount_due|rupiah }}</strong></div>
+    <div class="tx-row"><span>Dibayar</span><strong>{{ transaction.amount_paid|rupiah }}</strong></div>
+    <div class="tx-row"><span>Kembalian</span><strong>{{ transaction.change_amount|rupiah }}</strong></div>
+    <div class="tx-row"><span>Metode</span><strong>{{ transaction.get_payment_method_display }}</strong></div>
+    <p style="text-align:center; margin-top:1rem;">Terima kasih, selamat menikmati ☕</p>
+  </div>
+  <div class="tx-actions tx-no-print">
+    <a class="tx-btn tx-btn--outline" href="{% url 'payment_transaction:detail' transaction.id %}">Kembali</a>
+    <button class="tx-btn" onclick="window.print()">Cetak Struk</button>
+  </div>
+</section>
+{% endblock %}

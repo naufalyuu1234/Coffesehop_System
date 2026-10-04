@@ -55,9 +55,7 @@ def _change_quantity(request, product_id, delta):
     key = str(product_id)
     current = _cart(request)
     if key in current:
-        current[key] = max(0, int(current[key]) + delta)
-        if current[key] == 0:
-            del current[key]
+        current[key] = max(1, int(current[key]) + delta)
         request.session.modified = True
     return redirect("payment_transaction:cart")
 
@@ -109,10 +107,17 @@ def create_transaction(request, order_id):
         return HttpResponseNotAllowed(["GET", "POST"])
     if request.method == "GET":
         order = get_object_or_404(Order, pk=order_id)
+        if order.status != "PENDING":
+            messages.error(request, "Order ini tidak bisa dibayar lagi.")
+            return redirect("system_order:detail", pk=order.pk)
         return render(request, "payment_transaction/payment_form.html", {"order": order, "form": PaymentForm(order=order)})
     with db_transaction.atomic():
         order = get_object_or_404(Order.objects.select_for_update(), pk=order_id)
-        if order.status != "PENDING" or not order.items.exists() or Transaction.objects.filter(order=order, status="SUCCESS").exists():
+        if (
+            order.status != "PENDING"
+            or not order.items.exists()
+            or Transaction.objects.select_for_update().filter(order=order, status="SUCCESS").exists()
+        ):
             messages.error(request, "Order ini sudah dibayar atau tidak dapat diproses.")
             return redirect("system_order:detail", pk=order.pk)
         form = PaymentForm(request.POST, order=order)
@@ -129,13 +134,22 @@ def transaction_list(request):
     status = request.GET.get("status")
     method = request.GET.get("payment_method")
     search = request.GET.get("q")
+    date = request.GET.get("date")
     if status:
         queryset = queryset.filter(status=status)
     if method:
         queryset = queryset.filter(payment_method=method)
     if search:
         queryset = queryset.filter(Q(transaction_code__icontains=search) | Q(order__customer_name__icontains=search))
-    return render(request, "payment_transaction/transaction_list.html", {"transactions": queryset})
+    if date:
+        queryset = queryset.filter(created_at__date=date)
+    context = {
+        "transactions": queryset,
+        "status_choices": Transaction.STATUS_CHOICES,
+        "payment_method_choices": Transaction.PAYMENT_METHOD_CHOICES,
+        "filters": {"status": status or "", "payment_method": method or "", "q": search or "", "date": date or ""},
+    }
+    return render(request, "payment_transaction/transaction_list.html", context)
 
 
 def transaction_detail(request, pk):

@@ -1,10 +1,78 @@
-<!doctype html>
-<html lang="id">
-<head><meta charset="utf-8"><title>Pembayaran</title></head>
-<body>
-<h1>Pembayaran Order #{{ order.id }}</h1>
-<p>Total yang harus dibayar: Rp{{ order.formatted_total }}</p>
-{% if messages %}{% for message in messages %}<p>{{ message }}</p>{% endfor %}{% endif %}
-<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Bayar</button></form>
-</body>
-</html>
+{% extends "payment_transaction/base.html" %}
+{% load static transaction_format %}
+{% block title %}Pembayaran Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="tx-grid tx-grid--2">
+  <section class="tx-card">
+    <h2>Pembayaran Order #{{ order.id }}</h2>
+    <p><strong>Pelanggan:</strong> {{ order.customer_name }}</p>
+    <p class="tx-total">Total Tagihan: {{ order.total_amount|rupiah }}</p>
+    <div class="tx-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Produk</th><th>Qty</th><th>Harga</th><th>Subtotal</th></tr>
+        </thead>
+        <tbody>
+          {% for item in order.items.all %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.price|rupiah }}</td>
+              <td>{% widthratio item.price 1 item.quantity as subtotal %}{{ subtotal|rupiah }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="tx-card">
+    <h3>Konfirmasi Pembayaran</h3>
+    {% if form.non_field_errors %}
+      <div class="tx-alert tx-alert--error">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <form method="post" data-payment-form data-amount-due="{{ order.total_amount }}">
+      {% csrf_token %}
+      <div class="tx-payment-options">
+        {% for method, label in form.fields.payment_method.choices %}
+          <label class="tx-payment-option">
+            <input type="radio" name="payment_method" value="{{ method }}" {% if form.payment_method.value|default:'CASH' == method %}checked{% endif %}>
+            {{ label }}
+          </label>
+        {% endfor %}
+      </div>
+      {{ form.payment_method.errors }}
+
+      <div class="tx-form-row">
+        <label for="{{ form.amount_paid.id_for_label }}">Jumlah Dibayar</label>
+        {{ form.amount_paid }}
+        {{ form.amount_paid.errors }}
+      </div>
+
+      <div class="tx-form-row" data-reference-wrapper>
+        <label for="{{ form.payment_reference.id_for_label }}">Referensi Pembayaran</label>
+        {{ form.payment_reference }}
+        {{ form.payment_reference.errors }}
+      </div>
+
+      <div class="tx-form-row">
+        <label for="{{ form.notes.id_for_label }}">Catatan</label>
+        {{ form.notes }}
+      </div>
+
+      <p class="tx-status-note" data-status-preview>Siap diproses.</p>
+      <p><strong>Estimasi Kembalian:</strong> <span data-change-preview>{{ 0|rupiah }}</span></p>
+
+      <div class="tx-actions">
+        <a class="tx-btn tx-btn--outline" href="{% url 'system_order:detail' order.pk %}">Kembali</a>
+        <button class="tx-btn" type="submit" data-submit-payment>Konfirmasi Pembayaran</button>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'payment_transaction/js/transaction.js' %}"></script>
+{% endblock %}
