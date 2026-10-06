@@ -138,3 +138,8 @@ h1 {
     padding: 1.25rem;
   }
 }
+
+.app-body {
+  padding: 0;
+  background: transparent;
+}

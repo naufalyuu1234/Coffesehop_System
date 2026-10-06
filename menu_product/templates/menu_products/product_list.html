@@ -1,14 +1,13 @@
+{% extends "dashboard/base.html" %}
 {% load static %}
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Menu Product List</title>
-    <link rel="stylesheet" href="{% static 'menu/menu_product.css' %}" />
-  </head>
-  <body>
+{% block title %}Katalog Produk{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'menu/menu_product.css' %}" />
+{% endblock %}
+
+{% block content %}
     <div class="menu-card">
       <aside class="menu-hero">
         <h1>MyCoffe Menu List</h1>
@@ -24,7 +23,17 @@
       </aside>
 
       <div class="category-grid">
-        <p><a href="{% url 'payment_transaction:cart' %}">Keranjang</a></p>
+        <div class="cart-bar">
+          <div>
+            <span class="cart-eyebrow">Pesanan kamu</span>
+            <strong>Siap menikmati kopi hari ini?</strong>
+          </div>
+          <a class="cart-link" href="{% url 'payment_transaction:cart' %}">
+            <span class="cart-icon" aria-hidden="true">🛒</span>
+            <span>Keranjang</span>
+            <span class="cart-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
         {% comment %} Loop Kategori {% endcomment %}
         {% for category in categories %}
         <section class="menu-category">
@@ -35,14 +44,21 @@
             {% for product in category.products.all %}
             <article class="menu-item">
               <div class="item-head">
-                <span class="item-name">{{ product.name }}</span>
-                <span class="item-price">{{ product.formatted_price }}</span>
-                <span class="status-product {{ product.status_css_class }}">{{ product.status_label }}</span>
+                <div class="item-info">
+                  <span class="item-name">{{ product.name }}</span>
+                  <span class="item-price">{{ product.formatted_price }}</span>
+                </div>
+                <div class="item-actions">
+                  <span class="status-product {{ product.status_css_class }}">{{ product.status_label }}</span>
                 {% if product.is_available %}
-                <form method="post" action="{% url 'payment_transaction:cart_add' product.id %}">
-                  {% csrf_token %}<button type="submit">Tambah ke keranjang</button>
-                </form>
+                  <form class="add-cart-form" method="post" action="{% url 'payment_transaction:cart_add' product.id %}">
+                    {% csrf_token %}
+                    <button class="add-cart-button" type="submit">
+                      <span aria-hidden="true">+</span> Tambah
+                    </button>
+                  </form>
                 {% endif %}
+                </div>
               </div>
               {% if product.description %}
               <p class="item-desc">{{ product.description }}</p>
@@ -58,5 +74,4 @@
         {% endfor %}
       </div>
     </div>
-  </body>
-</html>
+{% endblock %}

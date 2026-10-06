@@ -1,36 +1,8 @@
+{% extends "dashboard/base.html" %}
 {% load static %}
-<!doctype html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Transaksi Kasir{% endblock %}</title>
+
+{% block title %}Transaksi Kasir{% endblock %}
+
+{% block extra_css %}
   <link rel="stylesheet" href="{% static 'payment_transaction/css/transaction.css' %}">
-  {% block extra_css %}{% endblock %}
-</head>
-<body>
-  <header class="tx-header">
-    <div class="tx-container tx-header__inner">
-      <h1 class="tx-brand">Coffee Shop Kasir</h1>
-      <nav class="tx-nav">
-        <a href="{% url 'menu_product:menu' %}">Menu</a>
-        <a href="{% url 'payment_transaction:cart' %}">Keranjang</a>
-        <a href="{% url 'payment_transaction:list' %}">Transaksi</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="tx-container tx-main">
-    {% if messages %}
-      <section class="tx-messages">
-        {% for message in messages %}
-          <div class="tx-alert tx-alert--{{ message.tags|default:'info' }}">{{ message }}</div>
-        {% endfor %}
-      </section>
-    {% endif %}
-    {% block content %}{% endblock %}
-  </main>
-
-  {% block extra_js %}{% endblock %}
-</body>
-</html>
+{% endblock %}

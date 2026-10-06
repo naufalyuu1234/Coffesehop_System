@@ -1,0 +1,60 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Coffee Shop Kasir{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'dashboard/index.css' %}">
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body class="app-body">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="sidebar-brand" href="{% url 'dashboard:index' %}">
+          <span class="brand-mark">☕</span>
+          <span>
+            <strong>MyCoffe</strong>
+            <small>Kasir System</small>
+          </span>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="Navigasi utama">
+          <span class="nav-label">Menu utama</span>
+          <a class="{% if request.resolver_match.app_name == 'dashboard' %}is-active{% endif %}" href="{% url 'dashboard:index' %}">
+            <span class="nav-icon">⌂</span> Dashboard
+          </a>
+          <a class="{% if request.resolver_match.app_name == 'menu_product' %}is-active{% endif %}" href="{% url 'menu_product:menu' %}">
+            <span class="nav-icon">▦</span> Katalog Produk
+          </a>
+          <a class="{% if request.resolver_match.app_name == 'system_order' %}is-active{% endif %}" href="{% url 'system_order:list' %}">
+            <span class="nav-icon">▤</span> Daftar Order
+          </a>
+          <a class="{% if request.resolver_match.app_name == 'payment_transaction' and request.resolver_match.url_name == 'cart' or request.resolver_match.url_name == 'checkout' %}is-active{% endif %}" href="{% url 'payment_transaction:cart' %}">
+            <span class="nav-icon">＋</span> Transaksi Baru
+          </a>
+          <a class="{% if request.resolver_match.app_name == 'payment_transaction' and request.resolver_match.url_name == 'list' %}is-active{% endif %}" href="{% url 'payment_transaction:list' %}">
+            <span class="nav-icon">▣</span> Riwayat Transaksi
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span class="online-dot"></span>
+          <span>Kasir aktif</span>
+        </div>
+      </aside>
+
+      <main class="app-content">
+        {% if messages %}
+          <section class="shell-messages">
+            {% for message in messages %}
+              <div class="shell-message shell-message--{{ message.tags|default:'info' }}">{{ message }}</div>
+            {% endfor %}
+          </section>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

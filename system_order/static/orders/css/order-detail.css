@@ -99,3 +99,8 @@ a.btn-back {
 a.btn-back:hover {
   text-decoration: underline;
 }
+
+.app-body {
+  padding: 0;
+  background: transparent;
+}

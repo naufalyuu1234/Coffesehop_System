@@ -1,14 +1,18 @@
+{% extends "dashboard/base.html" %}
 {% load static %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static 'orders/css/order-list.css' %}" />
-    <title>Order List</title>
-  </head>
-  <body>
-    <h1>DAFTAR ORDER</h1>
+
+{% block title %}Daftar Order{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'orders/css/order-list.css' %}" />
+{% endblock %}
+
+{% block content %}
+    <div class="page-heading">
+      <span class="page-kicker">Operasional</span>
+      <h1>Daftar Order</h1>
+      <p>Pantau pesanan pelanggan dan proses statusnya.</p>
+    </div>
     <main class="container">
       {% for order in orders %}
       <div class="card">
@@ -26,5 +30,4 @@
       <p>Belum ada order tersedia bos kuuu.</p>
       {% endfor %}
     </main>
-  </body>
-</html>
+{% endblock %}
