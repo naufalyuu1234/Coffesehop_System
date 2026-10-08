@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 from menu_product.models import Product
 from system_order.models import Order, OrderItem
@@ -160,3 +161,4 @@ def transaction_detail(request, pk):
 def transaction_receipt(request, pk):
     payment = get_object_or_404(Transaction.objects.select_related("order", "cashier"), pk=pk)
     return render(request, "payment_transaction/receipt.html", {"transaction": payment})
+

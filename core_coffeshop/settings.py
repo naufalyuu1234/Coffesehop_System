@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'system_order',
     'dashboard',
     'payment_transaction',
+    'authentication'
 ]
 
 MIDDLEWARE = [
